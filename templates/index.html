@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberHeuristic // Phishing & URL Threat Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="background-grid"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <header class="navbar">
+    <div class="nav-brand">
+      <span class="shield-icon">🛡️</span>
+      <div class="brand-text">
+        <span class="brand-title">CYBERSHIELD // HEURISTIC ANALYZER</span>
+        <span class="brand-subtitle">Real-Time Phishing Website & URL Heuristic Analysis</span>
+      </div>
+    </div>
+    <div class="nav-status">
+      <span class="pulse-indicator"></span>
+      <span class="status-label">DEFENSE ENGINE ACTIVE</span>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Mandatory Human Review & Limitation Notice -->
+    <section class="banner-disclaimer" id="notice-banner">
+      <div class="disclaimer-icon">⚠️</div>
+      <div class="disclaimer-content">
+        <strong>IMPORTANT NOTICE:</strong>
+        <span>Heuristic result; not a guarantee. Results should support, not replace, human review.</span>
+      </div>
+    </section>
+
+    <!-- Scan Input Form -->
+    <section class="glass-card scan-panel">
+      <div class="panel-header">
+        <h2 class="panel-title">URL Deep-Inspection Request</h2>
+        <span class="panel-tag">LEXICAL + DOM INSPECTOR</span>
+      </div>
+      <form id="scan-form" class="scan-form">
+        <div class="input-wrapper">
+          <span class="terminal-prefix">&gt;</span>
+          <input
+            type="text"
+            id="url-input"
+            class="url-input"
+            placeholder="Enter full target URL (e.g., https://example-verification.com/login)..."
+            required
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button type="button" id="clear-btn" class="btn-clear" title="Clear input">✕</button>
+        </div>
+        <div class="form-actions">
+          <div class="samples-wrapper">
+            <span class="sample-label">Try sample:</span>
+            <button type="button" class="btn-sample" data-url="https://secure-login-paypal.account-verify.xyz/update">Phish Sample #1</button>
+            <button type="button" class="btn-sample" data-url="http://192.168.1.1/admin-login">SSRF Private IP</button>
+            <button type="button" class="btn-sample" data-url="https://www.wikipedia.org/">Legitimate Site</button>
+          </div>
+          <button type="submit" id="submit-btn" class="btn-primary">
+            <span class="btn-text">RUN HEURISTIC SCAN</span>
+            <span class="btn-spinner" id="btn-spinner"></span>
+          </button>
+        </div>
+      </form>
+      <div id="form-error" class="form-error" style="display: none;"></div>
+    </section>
+
+    <!-- Loading State Overlay -->
+    <div id="scanning-indicator" class="glass-card loading-card" style="display: none;">
+      <div class="radar-scan"></div>
+      <div class="loading-info">
+        <h3>Executing Multistage Heuristic Telemetry...</h3>
+        <p class="loading-detail">Running Module A (Lexical parsing) &bull; Validating SSRF safety constraints &bull; Probing DOM structure</p>
+      </div>
+    </div>
+
+    <!-- Scan Results Panel -->
+    <section id="results-panel" class="glass-card results-card" style="display: none;">
+      <div class="results-top-bar">
+        <div class="target-url-group">
+          <span class="badge-label">TARGET URL:</span>
+          <a id="res-target-url" class="target-url-text" href="#" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="scan-meta">
+          <span class="meta-item">Scan ID: <code id="res-scan-id"></code></span>
+          <span class="meta-item">Timestamp: <span id="res-timestamp"></span></span>
+        </div>
+      </div>
+
+      <div class="results-grid">
+        <!-- Score & Risk Band Gauge -->
+        <div class="score-card">
+          <div class="gauge-container">
+            <div class="gauge-circle" id="score-gauge-circle">
+              <span class="gauge-score" id="res-score-number">0</span>
+              <span class="gauge-scale">/ 100</span>
+            </div>
+          </div>
+          <div class="risk-band-wrapper">
+            <span class="risk-band-title">RISK CLASSIFICATION</span>
+            <span class="risk-band-badge" id="res-risk-band">Analyzing...</span>
+          </div>
+          <div class="fetch-status-wrapper">
+            <span class="status-title">HTTP Client Status:</span>
+            <span class="status-detail" id="res-fetch-status">Pending</span>
+          </div>
+        </div>
+
+        <!-- Evidence Breakdown -->
+        <div class="signals-card">
+          <div class="signals-header">
+            <h3>Triggered Threat & Heuristic Signals</h3>
+            <span class="signal-count-badge" id="res-signal-count">0 Signals</span>
+          </div>
+          <div id="signals-list" class="signals-list">
+            <!-- Dynamic signals rendered here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Limitations & Disclaimers Accordion/List -->
+      <div class="limitations-container">
+        <div class="limitations-header">
+          <span class="limitations-icon">ⓘ</span>
+          <h4>Operational Limitations & Safety Bounds</h4>
+        </div>
+        <ul id="res-limitations-list" class="limitations-list">
+          <!-- Populated dynamically -->
+        </ul>
+      </div>
+    </section>
+
+    <!-- Scan History Section -->
+    <section class="glass-card history-card">
+      <div class="panel-header">
+        <div class="title-with-badge">
+          <h2 class="panel-title">Inspection Audit History</h2>
+          <span class="history-count" id="history-count">0 records</span>
+        </div>
+        <button id="refresh-history-btn" class="btn-secondary" title="Reload History">
+          <span class="btn-refresh-icon">↻</span> Refresh
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Target URL</th>
+              <th>Risk Score</th>
+              <th>Risk Band</th>
+              <th>Signals Triggered</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr>
+              <td colspan="7" class="empty-state">No past scans recorded yet. Enter a URL above to perform a scan.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>Real-Time Phishing Website & URL Heuristic Analyzer Prototype &bull; Automated Defense Intelligence</p>
+      <p class="footer-disclaimer">Heuristic result; not a guarantee. Results should support, not replace, human review.</p>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
